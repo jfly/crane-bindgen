@@ -22,7 +22,7 @@
           src = craneLib.cleanCargoSource (craneLib.path ./.);
           strictDeps = true;
 
-          HASH_BUSTER = 3; # just increment this to force a rebuild
+          HASH_BUSTER = 4; # just increment this to force a rebuild
 
           nativeBuildInputs = with pkgs; [
             rustPlatform.bindgenHook
@@ -35,8 +35,14 @@
             pkgs.libiconv
           ];
 
-          # Additional environment variables can be set directly
-          # MY_CUSTOM_VAR = "some value";
+          preBuild = ''
+            # All the `cargo:rerun-if-env-changed` env vars in https://github.com/rust-lang/rust-bindgen/blob/v0.69.4/bindgen/build.rs
+            echo "LLVM_CONFIG_PATH: $LLVM_CONFIG_PATH"
+            echo "LIBCLANG_PATH: $LIBCLANG_PATH"
+            echo "LIBCLANG_STATIC_PATH: $LIBCLANG_STATIC_PATH"
+            echo "BINDGEN_EXTRA_CLANG_ARGS: $BINDGEN_EXTRA_CLANG_ARGS"
+            env | grep BINDGEN_EXTRA_CLANG_ARGS_
+          '';
         };
       in
       {
