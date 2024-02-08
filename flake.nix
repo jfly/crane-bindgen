@@ -22,6 +22,12 @@
           src = craneLib.cleanCargoSource (craneLib.path ./.);
           strictDeps = true;
 
+          HASH_BUSTER = 3; # just increment this to force a rebuild
+
+          nativeBuildInputs = with pkgs; [
+            rustPlatform.bindgenHook
+          ];
+
           buildInputs = [
             # Add additional build inputs here
           ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
