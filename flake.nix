@@ -42,6 +42,11 @@
             echo "LIBCLANG_STATIC_PATH: $LIBCLANG_STATIC_PATH"
             echo "BINDGEN_EXTRA_CLANG_ARGS: $BINDGEN_EXTRA_CLANG_ARGS"
             env | grep BINDGEN_EXTRA_CLANG_ARGS_
+
+            # Hack to ensure that the deps crate and this crate have the same
+            # value for `BINDGEN_EXTRA_CLANG_ARGS` and can thereby share the
+            # prebuilt bindgen crate.
+            export BINDGEN_EXTRA_CLANG_ARGS=$(echo $BINDGEN_EXTRA_CLANG_ARGS | ${pkgs.lib.getExe pkgs.gnused} 's/-frandom-seed=[^ ]\+/-frandom-seed=deadbeef/')
           '';
         };
       in
